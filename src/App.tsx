@@ -1,12 +1,7 @@
 import { useEffect, useMemo, useRef } from "react";
 import { load } from "@2gis/mapgl";
 import type { Map as MapglMap, Label as MapglLabel } from "@2gis/mapgl/types";
-import type {
-  FeatureCollection,
-  GeoJsonProperties,
-  Geometry,
-  Point,
-} from "geojson";
+import type { FeatureCollection, GeoJsonProperties, Point } from "geojson";
 
 import dtpDataRaw from "./data/data.json?raw";
 import "./App.css";
@@ -112,7 +107,6 @@ export default function App() {
     load().then((mapgl) => {
       if (destroyed) return;
 
-      // Инициализация карты
       map = new mapgl.Map("map-container", {
         center: KALUGA_CENTER,
         zoom: 12,
