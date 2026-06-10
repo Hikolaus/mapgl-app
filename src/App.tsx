@@ -11,7 +11,8 @@ const STYLE_ID = "7518472d-ce2e-4b9d-934a-59398b587f78";
 const API_KEY = "2b8f7ef1-d311-4017-a6a3-5a59b645ec60";
 
 const HEATMAP_LAYER_ID = "kaluga-dtp-heatmap";
-const LABEL_BACKGROUND_IMAGE = "/label-bg.svg";
+
+const LABEL_BACKGROUND_IMAGE = import.meta.env.BASE_URL + "label-bg.svg";
 
 function createDtpLabels(
   mapgl: Awaited<ReturnType<typeof load>>,
@@ -21,7 +22,7 @@ function createDtpLabels(
   return points.features
     .slice(0, 100)
     .map((feature) => {
-      const category = feature.properties?.category || "ДТП";
+      const category = feature.properties?.category;
 
       if (typeof category !== "string" || category.length === 0) {
         return null;
@@ -37,6 +38,7 @@ function createDtpLabels(
           stretchY: [[8, 16]],
           padding: [4, 8, 4, 8],
         },
+
         minZoom: 14,
         color: "#000000",
         fontSize: 11,
@@ -53,7 +55,7 @@ function addDtpLayers(map: MapglMap) {
     map.addLayer({
       id: HEATMAP_LAYER_ID,
       type: "heatmap",
-      filter: ["match", ["geometryType"], ["Point"], true, false],
+      filter: ["match", ["sourceAttr", "purpose"], ["kaluga-dtp"], true, false],
       style: {
         color: [
           "interpolate",
@@ -75,6 +77,13 @@ function addDtpLayers(map: MapglMap) {
         radius: ["interpolate", ["linear"], ["zoom"], 9, 14, 13, 28, 16, 44],
         intensity: 0.9,
         opacity: 0.8,
+        weight: [
+          "match",
+          ["get", "severity"],
+          ["Тяжёлый", "С погибшими"],
+          2,
+          1,
+        ],
         downscale: 1,
       },
     });
